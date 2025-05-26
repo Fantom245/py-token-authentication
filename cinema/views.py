@@ -7,7 +7,10 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from cinema.models import Genre, Actor, CinemaHall, Movie, MovieSession, Order
-from .permissions import IsAdminOrIfAuthenticatedReadOnly
+from .permissions import (
+    IsAdminOrAuthenticatedCreateOrder,
+    IsAdminOrIfAuthenticatedReadOnly
+)
 
 from cinema.serializers import (
     GenreSerializer,
@@ -159,7 +162,7 @@ class OrderViewSet(
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsAdminOrAuthenticatedCreateOrder)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
